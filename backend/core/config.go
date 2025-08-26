@@ -8,31 +8,29 @@ import (
 
 type Config struct {
 	APPHost                 string
+
 	PGHost                  string
-	PGPort                  int
+	PGPort                  string
 	PGUser                  string
 	PGPassword              string
 	PGDatabase              string
 	PGSSLMode               string
 	PGTimeZone              string
+
 	MinioEndpoint           string
 	MinioUser               string
 	MinioPass               string
 	MinioBaseUrl            string
 	MinioPresignedLifetime  int
+
 	PasswordSalt            string
 	JWTAccessSecret         string
 	JWTRefreshSecret        string
+	
 	AllowOrigins            string
 }
 
 func BuildConfigFromEnv() (*Config, error) {
-	port, err := strconv.Atoi(os.Getenv("POSTGRES_PORT"))
-	if err != nil {
-		return nil, fmt.Errorf("invalid POSTGRES_PORT: %v", err)
-	}
-
-
 	minioPresignedLifetime, err := strconv.Atoi(os.Getenv("MINIO_PRESIGNED_LIFETIME"))
 	if err != nil {
 		return nil, fmt.Errorf("invalid MINIO_PRESIGNED_LIFETIME: %v", err)
@@ -41,7 +39,7 @@ func BuildConfigFromEnv() (*Config, error) {
 	config := &Config{
 		APPHost:                os.Getenv("APP_HOST"),
 		PGHost:                 os.Getenv("POSTGRES_HOST"),
-		PGPort:                 port,
+		PGPort:                 os.Getenv("POSTGRES_PORT"),
 		PGUser:                 os.Getenv("POSTGRES_USER"),
 		PGPassword:             os.Getenv("POSTGRES_PASSWORD"),
 		PGDatabase:             os.Getenv("POSTGRES_DB"),
