@@ -130,10 +130,25 @@ paths:
                       $ref: '#/components/schemas/WorkerReport'
         '404':
           $ref: '#/components/responses/NotFound'
+  /worker:
+    get:
+      summary: Worker root — basic info and available worker endpoints
+      description: "Информационная точка для воркеров. Возвращает список доступных подэндпоинтов и краткое описание."
+      security:
+        - workerAuth: []
+      responses:
+        '200':
+          description: Worker API root
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerRoot'
   /worker/alive:
     get:
       summary: Worker liveness check
       description: "Worker can call this to confirm server is reachable (or server can call to check worker)."
+      security:
+        - workerAuth: []
       responses:
         '200':
           description: Alive
@@ -149,6 +164,8 @@ paths:
     get:
       summary: What can I backup? (capabilities)
       description: "Returns JSON describing capabilities the worker can perform (allowed item types, limits)."
+      security:
+        - workerAuth: []
       responses:
         '200':
           description: Capabilities
@@ -160,6 +177,8 @@ paths:
     post:
       summary: Receive backup plan (what to backup, how often, and presigned s3 URLs)
       description: "Server sends the worker a list of items to backup including presigned S3 URLs where each item must be uploaded."
+      security:
+        - workerAuth: []
       requestBody:
         required: true
         content:
@@ -190,6 +209,11 @@ components:
       type: apiKey
       in: cookie
       name: refresh_token
+    workerAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'Worker token header. Required format: "Worker <token>"'
   schemas:
     UserRegister:
       type: object
@@ -365,6 +389,33 @@ components:
           type: string
         message:
           type: string
+    WorkerRoot:
+      type: object
+      properties:
+        self:
+          type: string
+          example: /worker
+        endpoints:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              method:
+                type: string
+              description:
+                type: string
+          example:
+            - path: /worker/alive
+              method: GET
+              description: Liveness check
+            - path: /worker/capabilities
+              method: GET
+              description: Get capabilities (what can be backed up)
+            - path: /worker/plan
+              method: POST
+              description: Receive backup plan with presigned S3 URLs
   responses:
     BadRequest:
       description: Bad request
