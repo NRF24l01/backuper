@@ -290,12 +290,6 @@ components:
         access_token:
           type: string
           description: "JWT used in Authorization: Bearer <token>"
-        token_type:
-          type: string
-          example: Bearer
-        expires_in:
-          type: integer
-          description: "Seconds until access token expires."
       required:
         - access_token
     AuthOnlyResponse:
@@ -303,8 +297,6 @@ components:
       properties:
         access_token:
           type: string
-        expires_in:
-          type: integer
       required:
         - access_token
     WorkerRegister:
