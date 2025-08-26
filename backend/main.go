@@ -6,7 +6,10 @@ import (
 	"github.com/NRF24l01/backuper/models"
 	"github.com/NRF24l01/backuper/routes"
 	"github.com/NRF24l01/backuper/schemas"
+	"github.com/NRF24l01/go-web-utils/echokit"
 	"github.com/NRF24l01/go-web-utils/s3util"
+
+	"github.com/go-playground/validator"
 
 	"log"
 	"os"
@@ -46,7 +49,12 @@ func main() {
 		log.Fatalf("failed to create S3 client: %v", err)
 	}
 
+	// Validators
+	validater := validator.New()
+
 	e := echo.New()
+
+	e.Validator = &echokit.CustomValidator{Validator: validater}
 
 	if !PRODUCTION_ENV {
 		e.Use(echoMw.Logger())
