@@ -8,9 +8,28 @@ info:
 servers:
   - url: https://api.example.com
     description: Production
+tags:
+  - name: Auth
+    description: Authentication endpoints (login, refresh, register - dev only)
+  - name: Workers
+    description: Worker management and system-level endpoints (register worker, options, reports)
+  - name: Worker-Agent
+    description: Endpoints used by worker agents. Require header Authorization: "Worker <token>"
+x-tagGroups:
+  - name: "Authentication"
+    tags:
+      - Auth
+  - name: "Management"
+    tags:
+      - Workers
+  - name: "Worker Agent"
+    tags:
+      - Worker-Agent
 paths:
   /auth/register:
     post:
+      tags:
+        - Auth
       summary: Register user (DEV only)
       description: "Create new user. Endpoint intended to be enabled only in development mode."
       requestBody:
@@ -30,6 +49,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
   /auth/login:
     post:
+      tags:
+        - Auth
       summary: Login with nick and password
       requestBody:
         required: true
@@ -53,6 +74,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
   /auth/refresh:
     post:
+      tags:
+        - Auth
       summary: Refresh auth JWT using HttpOnly refresh cookie
       description: "Client must send the refresh token in cookies. Endpoint returns a new auth JWT (in body) and may set a new refresh cookie."
       security:
@@ -73,6 +96,8 @@ paths:
           $ref: '#/components/responses/Unauthorized'
   /workers:
     post:
+      tags:
+        - Workers
       summary: Register a new worker (client-facing)
       requestBody:
         required: true
@@ -90,6 +115,8 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
     get:
+      tags:
+        - Workers
       summary: List available backup options and how often (system-level)
       description: "Return JSON describing what items can be selected for backup and default frequencies."
       security:
@@ -103,6 +130,8 @@ paths:
                 $ref: '#/components/schemas/BackupOptionsList'
   /workers/{workerId}/reports:
     get:
+      tags:
+        - Workers
       summary: List reports for a worker
       parameters:
         - name: workerId
@@ -132,6 +161,8 @@ paths:
           $ref: '#/components/responses/NotFound'
   /worker:
     get:
+      tags:
+        - Worker-Agent
       summary: Worker root — basic info and available worker endpoints
       description: "Информационная точка для воркеров. Возвращает список доступных подэндпоинтов и краткое описание."
       security:
@@ -145,6 +176,8 @@ paths:
                 $ref: '#/components/schemas/WorkerRoot'
   /worker/alive:
     get:
+      tags:
+        - Worker-Agent
       summary: Worker liveness check
       description: "Worker can call this to confirm server is reachable (or server can call to check worker)."
       security:
@@ -162,6 +195,8 @@ paths:
                     example: alive
   /worker/capabilities:
     get:
+      tags:
+        - Worker-Agent
       summary: What can I backup? (capabilities)
       description: "Returns JSON describing capabilities the worker can perform (allowed item types, limits)."
       security:
@@ -175,6 +210,8 @@ paths:
                 $ref: '#/components/schemas/BackupCapabilities'
   /worker/plan:
     post:
+      tags:
+        - Worker-Agent
       summary: Receive backup plan (what to backup, how often, and presigned s3 URLs)
       description: "Server sends the worker a list of items to backup including presigned S3 URLs where each item must be uploaded."
       security:
