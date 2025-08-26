@@ -14,7 +14,7 @@ tags:
   - name: Workers
     description: Worker management and system-level endpoints (register worker, options, reports)
   - name: Worker-Agent
-    description: Endpoints used by worker agents. Require header Authorization: "Worker <token>"
+    description: "Endpoints used by worker agents. Require header Authorization: Worker <token>"
 x-tagGroups:
   - name: "Authentication"
     tags:
@@ -137,6 +137,7 @@ paths:
         - name: workerId
           in: path
           required: true
+          description: "Worker UUID (must match the {workerId} path template)."
           schema:
             type: string
             format: uuid
@@ -159,6 +160,7 @@ paths:
                       $ref: '#/components/schemas/WorkerReport'
         '404':
           $ref: '#/components/responses/NotFound'
+
   /worker:
     get:
       tags:
