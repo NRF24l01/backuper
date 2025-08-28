@@ -16,3 +16,12 @@ func (u *User) CheckPassword(password string) bool {
 	res, err := passhash.CheckPassword(u.Password, password)
 	return res && err == nil
 }
+
+func (u *User) HashPassword() error {
+	hash, err := passhash.HashPassword(u.Password, passhash.DefaultParams)
+	if err != nil {
+		return err
+	}
+	u.Password = hash
+	return nil
+}
