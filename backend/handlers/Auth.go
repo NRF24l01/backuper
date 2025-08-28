@@ -3,9 +3,9 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/NRF24l01/backuper/models"
-	"github.com/NRF24l01/backuper/schemas"
 	"github.com/labstack/echo/v4"
+	"github.com/nrf24l01/backuper/models"
+	"github.com/nrf24l01/backuper/schemas"
 )
 
 func (h* Handler) UserLoginHandler(c echo.Context) error {

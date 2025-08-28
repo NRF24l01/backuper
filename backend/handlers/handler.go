@@ -1,10 +1,10 @@
 package handlers
 
 import (
-	"github.com/NRF24l01/go-web-utils/s3util"
+	"github.com/nrf24l01/go-web-utils/s3util"
 	"gorm.io/gorm"
 
-	"github.com/NRF24l01/backuper/core"
+	"github.com/nrf24l01/backuper/core"
 )
 
 type Handler struct {

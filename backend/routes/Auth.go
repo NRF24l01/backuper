@@ -1,9 +1,9 @@
 package routes
 
 import (
-	"github.com/NRF24l01/backuper/handlers"
-	"github.com/NRF24l01/backuper/schemas"
-	"github.com/NRF24l01/go-web-utils/echokit"
+	"github.com/nrf24l01/backuper/handlers"
+	"github.com/nrf24l01/backuper/schemas"
+	"github.com/nrf24l01/go-web-utils/echokit"
 
 	"github.com/labstack/echo/v4"
 )

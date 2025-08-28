@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/NRF24l01/backuper/core"
+	"github.com/nrf24l01/backuper/core"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

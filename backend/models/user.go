@@ -1,8 +1,8 @@
 package models
 
 import (
-	"github.com/NRF24l01/go-web-utils/goorm"
-	"github.com/NRF24l01/go-web-utils/passhash"
+	"github.com/nrf24l01/go-web-utils/goorm"
+	"github.com/nrf24l01/go-web-utils/passhash"
 )
 
 type User struct {

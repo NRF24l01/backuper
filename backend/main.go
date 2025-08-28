@@ -1,13 +1,13 @@
 package main
 
 import (
-	"github.com/NRF24l01/backuper/core"
-	"github.com/NRF24l01/backuper/handlers"
-	"github.com/NRF24l01/backuper/models"
-	"github.com/NRF24l01/backuper/routes"
-	"github.com/NRF24l01/backuper/schemas"
-	"github.com/NRF24l01/go-web-utils/echokit"
-	"github.com/NRF24l01/go-web-utils/s3util"
+	"github.com/nrf24l01/backuper/core"
+	"github.com/nrf24l01/backuper/handlers"
+	"github.com/nrf24l01/backuper/models"
+	"github.com/nrf24l01/backuper/routes"
+	"github.com/nrf24l01/backuper/schemas"
+	"github.com/nrf24l01/go-web-utils/echokit"
+	"github.com/nrf24l01/go-web-utils/s3util"
 
 	"github.com/go-playground/validator"
 
