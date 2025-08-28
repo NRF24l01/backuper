@@ -14,4 +14,10 @@ func RegisterAuthRoutes(e *echo.Echo, h *handlers.Handler) {
 	group.POST("/login", h.UserLoginHandler, echokit.ValidationMiddleware(func() interface{} {
 		return &schemas.AuthRequest{}
 	}))
+
+	if (h.Config.TestEnv) {
+		group.POST("/register", h.UserRegisterHandler, echokit.ValidationMiddleware(func() interface{} {
+			return &schemas.AuthRequest{}
+		}))
+	}
 }

@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/labstack/gommon/log"
 	"github.com/nrf24l01/go-web-utils/goorm"
 	"github.com/nrf24l01/go-web-utils/passhash"
 )
@@ -14,6 +15,7 @@ type User struct {
 
 func (u *User) CheckPassword(password string) bool {
 	res, err := passhash.CheckPassword(u.Password, password)
+	log.Printf("Password check result: %v, error: %v", res, err)
 	return res && err == nil
 }
 

@@ -21,8 +21,7 @@ import (
 	echoMw "github.com/labstack/echo/v4/middleware"
 )
 func main() {
-	PRODUCTION_ENV := os.Getenv("RUNTIME_PRODUCTION") == "true"
-	if !PRODUCTION_ENV {
+	if os.Getenv("PRODUCTION_ENV") != "true" {
 		err := godotenv.Load(".env")
 		if err != nil {
 			log.Fatalf("failed to load .env: %v", err)
@@ -56,7 +55,7 @@ func main() {
 
 	e.Validator = &echokit.CustomValidator{Validator: validater}
 
-	if !PRODUCTION_ENV {
+	if !config.ProductionEnv {
 		e.Use(echoMw.Logger())
 	}
     e.Use(echoMw.Recover())

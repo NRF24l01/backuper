@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/nrf24l01/backuper/models"
 	"github.com/nrf24l01/backuper/schemas"
+	"github.com/nrf24l01/go-web-utils/jwtutil"
 )
 
 func (h* Handler) UserLoginHandler(c echo.Context) error {
@@ -20,9 +21,11 @@ func (h* Handler) UserLoginHandler(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, schemas.Message{Status: "Invalid username or password"})
 	}
 
-	
+	accessToken, refreshToken, err := jwtutil.GenerateTokenPair(user.ID.String(), user.Username, []byte(h.Config.JWTAccessSecret), []byte(h.Config.JWTRefreshSecret))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, schemas.DefaultInternalErrorResponse)
+	}
 
-	// Set the refresh token in an HttpOnly cookie
 	cookie := new(http.Cookie)
 	cookie.Name = "refresh_token"
 	cookie.Value = refreshToken
@@ -30,7 +33,7 @@ func (h* Handler) UserLoginHandler(c echo.Context) error {
 	cookie.Path = "/"
 	c.SetCookie(cookie)
 
-	return c.JSON(http.StatusOK, schemas.Message{Status: "User logged in successfully"})
+	return c.JSON(http.StatusOK, schemas.AuthResponse{AccessToken: accessToken})
 }
 
 func (h* Handler) UserRegisterHandler(c echo.Context) error {
@@ -54,5 +57,17 @@ func (h* Handler) UserRegisterHandler(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, schemas.DefaultInternalErrorResponse)
 	}
 
-	return c.JSON(http.StatusCreated, schemas.Message{Status: "User registered successfully"})
+	accessToken, refreshToken, err := jwtutil.GenerateTokenPair(newUser.ID.String(), newUser.Username, []byte(h.Config.JWTAccessSecret), []byte(h.Config.JWTRefreshSecret))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, schemas.DefaultInternalErrorResponse)
+	}
+
+	cookie := new(http.Cookie)
+	cookie.Name = "refresh_token"
+	cookie.Value = refreshToken
+	cookie.HttpOnly = true
+	cookie.Path = "/"
+	c.SetCookie(cookie)
+
+	return c.JSON(http.StatusCreated, schemas.AuthResponse{AccessToken: accessToken})
 }

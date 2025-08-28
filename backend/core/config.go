@@ -28,6 +28,9 @@ type Config struct {
 	JWTRefreshSecret        string
 	
 	AllowOrigins            string
+
+	TestEnv                 bool
+	ProductionEnv           bool
 }
 
 func BuildConfigFromEnv() (*Config, error) {
@@ -54,6 +57,8 @@ func BuildConfigFromEnv() (*Config, error) {
 		JWTAccessSecret:        os.Getenv("JWT_ACCESS_SECRET"),
 		JWTRefreshSecret:       os.Getenv("JWT_REFRESH_SECRET"),
 		AllowOrigins:           os.Getenv("ALLOWED_ORIGINS"),
+		TestEnv:                os.Getenv("TEST_ENV") == "true",
+		ProductionEnv:          os.Getenv("PRODUCTION_ENV") == "true",
 	}
 
 	return config, nil
