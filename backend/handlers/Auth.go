@@ -71,3 +71,38 @@ func (h* Handler) UserRegisterHandler(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, schemas.AuthResponse{AccessToken: accessToken})
 }
+
+func (h* Handler) UserTokenRefreshHandler(c echo.Context) error {
+	refreshToken, err := c.Cookie("refresh_token")
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, schemas.Message{Status: "Unauthorized"})
+	}
+
+	claims, err := jwtutil.ValidateToken(refreshToken.Value, []byte(h.Config.JWTRefreshSecret))
+	if err != nil {
+		return c.JSON(http.StatusUnauthorized, schemas.Message{Status: "Unauthorized"})
+	}
+
+	userID, ok := claims["user_id"].(string)
+	if !ok || userID == "" {
+		return c.JSON(http.StatusUnauthorized, schemas.Message{Status: "Unauthorized"})
+	}
+	username, ok := claims["username"].(string)
+	if !ok || username == "" {
+		return c.JSON(http.StatusUnauthorized, schemas.Message{Status: "Unauthorized"})
+	}
+
+	accessToken, newRefreshToken, err := jwtutil.GenerateTokenPair(userID, username, []byte(h.Config.JWTAccessSecret), []byte(h.Config.JWTRefreshSecret))
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, schemas.DefaultInternalErrorResponse)
+	}
+
+	cookie := new(http.Cookie)
+	cookie.Name = "refresh_token"
+	cookie.Value = newRefreshToken
+	cookie.HttpOnly = true
+	cookie.Path = "/"
+	c.SetCookie(cookie)
+
+	return c.JSON(http.StatusOK, schemas.AuthResponse{AccessToken: accessToken})
+}
