@@ -8,13 +8,13 @@ import (
 
 type User struct {
 	goorm.BaseModel
-	Username string `json:"username" validate:"required"`
-	Password string `json:"password" validate:"required"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 
 func (u *User) CheckPassword(password string) bool {
-	res, err := passhash.CheckPassword(u.Password, password)
+	res, err := passhash.CheckPassword(password, u.Password)
 	log.Printf("Password check result: %v, error: %v", res, err)
 	return res && err == nil
 }
