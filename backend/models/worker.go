@@ -8,8 +8,9 @@ import (
 
 type Worker struct {
 	goorm.BaseModel
-	Name  string `json:"name"`
-	Token string `json:"token"`
+	Name       string `json:"name"`
+	Token      string `json:"token"`
+	LastOnline int64  `json:"last_online" gorm:"default:0"`
 }
 
 func (w *Worker) NewToken() error {
