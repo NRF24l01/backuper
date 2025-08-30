@@ -20,3 +20,15 @@
 - Экспорт
 - Сжать
 - Выгрузить
+
+## Как хранить данные о том что можно бекапить?
+```json
+{
+    "tableName": "users",
+    "schemaName": "public",
+    "dbName": "postgres",
+    "freq": 3600,
+    "lastBck": 1756557296
+}
+```
+freq in sec
