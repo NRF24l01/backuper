@@ -32,3 +32,24 @@ func (h *Handler) WorkerCreateHandler(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, worker_response)
 }
+
+func (h *Handler) WorkerListHandler(c echo.Context) error {
+	var workers []models.Worker
+	if err := h.DB.Find(&workers).Error; err != nil {
+		return echo.NewHTTPError(http.StatusInternalServerError, schemas.DefaultInternalErrorResponse)
+	}
+
+	response := schemas.WorkerListResponse{
+		Workers: make([]schemas.WorkerStatus, len(workers)),
+	}
+	for i, worker := range workers {
+		response.Workers[i] = schemas.WorkerStatus{
+			WorkerUUID: worker.ID.String(),
+			Name:      worker.Name,
+			CreatedAt: worker.CreatedAt.Unix(),
+			LastOnline: worker.LastOnline,
+		}
+	}
+
+	return c.JSON(http.StatusOK, response)
+}

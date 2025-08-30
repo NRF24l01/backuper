@@ -15,4 +15,5 @@ func RegisterWorkerRoutes(e *echo.Echo, h *handlers.Handler) {
 	group.POST("", h.WorkerCreateHandler, echokit.ValidationMiddleware(func() interface{} {
 			return &schemas.WorkerCreateRequest{}
 		}))
+	group.GET("", h.WorkerListHandler)
 }
