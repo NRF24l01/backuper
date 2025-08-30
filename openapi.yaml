@@ -117,17 +117,17 @@ paths:
     get:
       tags:
         - Workers
-      summary: List available backup options and how often (system-level)
-      description: "Return JSON describing what items can be selected for backup and default frequencies."
+      summary: List workers
+      description: "Return a list of registered workers, including their name, creation date, and last online date."
       security:
         - bearerAuth: []
       responses:
         '200':
-          description: Backup options
+          description: List of workers
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BackupOptionsList'
+                $ref: '#/components/schemas/WorkerList'
   /workers/{workerId}/reports:
     get:
       tags:
@@ -447,6 +447,32 @@ components:
             - path: /worker/plan
               method: POST
               description: Receive backup plan with presigned S3 URLs
+    WorkerList:
+      type: object
+      properties:
+        workers:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+                description: "Human-readable worker name."
+                example: worker-eu-1
+              created_at:
+                type: string
+                format: date-time
+                description: "Date and time when the worker was created."
+                example: "2023-10-01T12:00:00Z"
+              last_online:
+                type: string
+                format: date-time
+                description: "Date and time when the worker was last online."
+                example: "2023-10-15T14:30:00Z"
+            required:
+              - name
+              - created_at
+              - last_online
   responses:
     BadRequest:
       description: Bad request
