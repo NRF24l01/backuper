@@ -128,6 +128,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WorkerList'
+  /workers/{workerId}:
+    get:
+      tags:
+        - Workers
+      summary: List of backup tasks for worker
+      parameters:
+        - name: workerId
+          in: path
+          required: true
+          description: "Worker UUID (must match the {workerId} path template)."
+          schema:
+            type: string
+            format: uuid
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of backup tasks
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  tasks:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        about:
+                          type: object
+                          additionalProperties: true
+                        freq:
+                          type: integer
+                        lastBck:
+                          type: integer
   /workers/{workerId}/reports:
     get:
       tags:
@@ -196,26 +233,11 @@ paths:
                     type: string
                     example: alive
   /worker/capabilities:
-    get:
-      tags:
-        - Worker-Agent
-      summary: What can I backup? (capabilities)
-      description: "Returns JSON describing capabilities the worker can perform (allowed item types, limits)."
-      security:
-        - workerAuth: []
-      responses:
-        '200':
-          description: Capabilities
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BackupCapabilities'
-  /worker/plan:
     post:
       tags:
         - Worker-Agent
-      summary: Receive backup plan (what to backup, how often, and presigned s3 URLs)
-      description: "Server sends the worker a list of items to backup including presigned S3 URLs where each item must be uploaded."
+      summary: Report worker capabilities (what can I backup?)
+      description: "Worker sends a list of items it can backup, including type and details."
       security:
         - workerAuth: []
       requestBody:
@@ -223,18 +245,29 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BackupPlan'
+              type: array
+              items:
+                $ref: '#/components/schemas/WorkerCapabilityItem'
       responses:
         '200':
-          description: Plan accepted
+          description: Capabilities reported successfully
+  /worker/plan:
+    get:
+      tags:
+        - Worker-Agent
+      summary: Retrieve backup plan (what to backup)
+      description: "Worker retrieves a list of items to backup, including frequency, last backup time, and presigned S3 URL."
+      security:
+        - workerAuth: []
+      responses:
+        '200':
+          description: Backup plan
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  accepted:
-                    type: boolean
-                    example: true
+                type: array
+                items:
+                  $ref: '#/components/schemas/WorkerPlanItem'
         '400':
           $ref: '#/components/responses/BadRequest'
 
@@ -473,6 +506,58 @@ components:
               - name
               - created_at
               - last_online
+    WorkerCapabilityItem:
+      type: object
+      required:
+        - type
+        - about
+      properties:
+        type:
+          type: string
+          description: "Type of backup item (e.g., 'postgres')."
+          example: postgres
+        about:
+          type: object
+          description: "Details about the item."
+          additionalProperties: true
+          example:
+            tableName: users
+            schemaName: public
+            dbName: postgres
+    WorkerPlanItem:
+      type: object
+      required:
+        - type
+        - about
+        - freq
+        - lastBck
+        - path
+      properties:
+        type:
+          type: string
+          description: "Type of backup item."
+          example: postgres
+        about:
+          type: object
+          description: "Details about the item."
+          additionalProperties: true
+          example:
+            tableName: users
+            schemaName: public
+            dbName: postgres
+        freq:
+          type: integer
+          description: "Backup frequency in seconds."
+          example: 3600
+        lastBck:
+          type: integer
+          description: "Unix timestamp of last backup."
+          example: 1756557296
+        path:
+          type: string
+          format: uri
+          description: "Presigned S3 URL for upload."
+          example: https://s3.example.com/presigned-url
   responses:
     BadRequest:
       description: Bad request
