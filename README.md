@@ -24,11 +24,14 @@
 ## Как хранить данные о том что можно бекапить?
 ```json
 {
-    "tableName": "users",
-    "schemaName": "public",
-    "dbName": "postgres",
+    "type": "postgres",
+    "about": {
+        "tableName": "users",
+        "schemaName": "public",
+        "dbName": "postgres",
+    },
     "freq": 3600,
     "lastBck": 1756557296
 }
 ```
-freq in sec
+freq in sec, lastBck - unix timestamp
