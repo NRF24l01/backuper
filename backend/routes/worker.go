@@ -16,4 +16,5 @@ func RegisterWorkerRoutes(e *echo.Echo, h *handlers.Handler) {
 			return &schemas.WorkerCreateRequest{}
 		}))
 	group.GET("", h.WorkerListHandler)
+	group.GET("/:id", h.WorkerGetBackupTasksHandler)
 }

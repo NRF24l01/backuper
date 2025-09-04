@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/nrf24l01/backuper/models"
 	"github.com/nrf24l01/backuper/schemas"
@@ -52,4 +53,33 @@ func (h *Handler) WorkerListHandler(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, response)
+}
+
+func (h *Handler) WorkerGetBackupTasksHandler(c echo.Context) error {
+	var tasks []models.WorkerCapability
+	workerID := c.Param("id")
+	
+	parsedUUID, err := uuid.Parse(workerID)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "Invalid UUID")
+	}
+	if parsedUUID.Version() != 4 {
+		return echo.NewHTTPError(http.StatusBadRequest, "UUID must be version 4")
+	}
+
+	if err := h.DB.Where("worker_id = ?", workerID).Find(&tasks).Error; err != nil {
+		return c.JSON(http.StatusInternalServerError, schemas.DefaultInternalErrorResponse)
+	}
+	
+	tasksResp := make([]schemas.BackupTask, len(tasks))
+	for i, task := range tasks {
+		tasksResp[i] = schemas.BackupTask{
+			Type:    task.Type,
+			About:   task.About,
+			Freq:    task.BackupInterval,
+			LastBck: task.LastBck,
+		}
+	}
+
+	return c.JSON(http.StatusOK, schemas.WorkerGetBackupTasksResponse{Tasks: tasksResp})
 }

@@ -19,3 +19,14 @@ type WorkerStatus struct {
 type WorkerListResponse struct {
 	Workers []WorkerStatus `json:"workers"`
 }
+
+type WorkerGetBackupTasksResponse struct {
+	Tasks []BackupTask `json:"tasks"`
+}
+
+type BackupTask struct {
+	Type          string `json:"type"`
+	About         string `json:"about"`
+	Freq 		  uint64 `json:"freq"`
+	LastBck       uint64 `json:"lastBck"`
+}
